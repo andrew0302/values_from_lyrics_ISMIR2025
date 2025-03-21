@@ -1,0 +1,130 @@
+---
+title: "format_LLM_data"
+author: "Andrew M. Demetriou"
+---
+
+```{r setup, include=FALSE}
+library('here')            # file logistics
+library('data.table')      # data manipulation
+library('tidyverse')       # data manipulation
+library('knitr')
+
+values <- c("POWER", "ACHIEVEMENT", "HEDONISM",  
+            "STIMULATION", "SELF", "UNIVERSALISM", 
+            "BENEVOLENCE", "TRADITION",  
+            "CONFORMITY", "SECURITY")
+
+options(scipen=999)
+```
+
+# pilots
+
+```{r}
+read_in_files <- function(path){
+  
+  # create character vector of files
+  files <- list.files(here(path))
+  
+  dfs<- lapply(files, function(x){
+    fread(here(path, x), fill=T)
+  })
+    
+  # name dfs after file they were made from
+  names(dfs) <- files
+  
+  # create one big-ass df with idcolumn
+  llm_df <- rbindlist(dfs, idcol = 'model')
+  llm_df <- as.data.frame(llm_df)
+  
+  return(llm_df)
+}
+```
+
+```{r}
+path <- here("_data", "_machine_scores", "LLMs", "wave_2", "pilot-10x-all")
+llm_df <- read_in_files(path)
+
+# rename columns to match participant df
+colnames(llm_df) <- c("model", "item_ID", 
+                      paste0(toupper(colnames(llm_df)[3:12])))
+llm_df <- llm_df %>% rename(SELF = `SELF-DIRECTION`)
+
+# shrink model ids
+llm_df$model <- gsub('.csv', '', llm_df$model)
+llm_df$model <- gsub('-ratings', '', llm_df$model)
+
+# removing weighted scores
+llm_df <- llm_df %>% filter(!grepl("weight", model))
+
+# rename mistral 24b
+llm_df$model <- str_replace(llm_df$model, "mistral-small:24b", "mistral24b")
+
+# split model ID into multiple columns
+llm_df[c('model_name', 'text', "scale", "run")] <- str_split_fixed(llm_df$model, "-", 4)
+
+# rename model column
+llm_df <- llm_df %>% select(-model, -scale) %>% rename(model = model_name)
+
+# arrange so that each run is an individual column
+llm_df <- llm_df %>% 
+  pivot_longer(
+    cols = all_of(values), names_to = "value", values_to = "score") %>%
+    pivot_wider(names_from = run, values_from = score, names_prefix = "run_")
+```
+
+```{r}
+#todo: rename LLM data to differentiate from participant data
+saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "pilot_dfs.RDS"))
+```
+
+```{r}
+format_llm_df <- function(llm_df){
+  
+  # rename columns to match participant df
+  colnames(llm_df) <- c("model", "item_ID", paste0(toupper(colnames(llm_df)[3:12])))
+  llm_df <- llm_df %>% rename(SELF = `SELF-DIRECTION`)
+  
+  # shrink model ids
+  llm_df$model <- gsub('.csv', '', llm_df$model)
+  llm_df$model <- gsub('-ratings', '', llm_df$model)
+  
+  # removing weighted scores
+  llm_df <- llm_df %>% filter(!grepl("weight", model))
+  
+  # split model ID into multiple columns
+  llm_df[c('model_name', 'text', "scale", "run")] <- str_split_fixed(llm_df$model, "-", 4)
+  
+  # rename model column
+  llm_df <- llm_df %>% select(-model, -scale) %>% rename(model = model_name)
+  
+  # arrange so that each run is an individual column
+  llm_df <- llm_df %>% 
+    pivot_longer(
+      cols = all_of(values), names_to = "value", values_to = "score") %>%
+      pivot_wider(names_from = run, values_from = score, names_prefix = "run_")
+}
+```
+
+```{r}
+path <- here("_data", "_machine_scores", "LLMs", "wave_2", "lyrics-1-3x-gemma+phi+qwen")
+llm_df_1 <- read_in_files(path) %>% format_llm_df()
+
+llm_df_1 <- llm_df_1 %>% mutate(run_10 = case_when(
+  model == "qwen2.5:7b" ~ run_13,
+  .default = run_10)
+) %>% select(-run_13)
+
+path <- here("_data", "_machine_scores", "LLMs", "wave_2", "lyrics-2-3x-gemma+phi+qwen")
+llm_df_2 <- read_in_files(path) %>% format_llm_df()
+
+llm_df <- rbind(llm_df_1, llm_df_2)
+
+rm(llm_df_1, llm_df_2)
+```
+
+
+
+```{r}
+saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "wave_df.RDS"))
+```
+
