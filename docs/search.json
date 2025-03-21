@@ -2,15 +2,8 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "ISMIR 2025: Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models",
+    "title": "Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models",
     "section": "",
-    "text": "This is a companion repository."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
+    "text": "This is a companion repository for our ISMIR 2025 submission."
   }
 ]
