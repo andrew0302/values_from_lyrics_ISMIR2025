@@ -5,3 +5,5 @@ title: "Towards Automatic Personal Value Estimation in Song Lyrics with Large La
 This is a companion repository for our ISMIR 2025 submission. 
 
 
+
+![](_images/pilot_llm_bootstrap_ICC2k_ICC2.png){fig-align="center"}

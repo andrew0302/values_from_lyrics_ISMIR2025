@@ -47,6 +47,8 @@ lyrics_plots <- lapply(seq_along(bootstrap_dfs[['lyrics']]), function(i){
 })
 
 wrap_plots(lyrics_plots) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
+
+ggsave(here("_images", "pilot_llm_bootstrap_ICC2k.png"))
 ```
 
 ```{r}
@@ -62,5 +64,7 @@ lyrics_plots <- lapply(seq_along(bootstrap_dfs[['lyrics']]), function(i){
 })
 
 wrap_plots(lyrics_plots) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
+
+ggsave(here("_images", "pilot_llm_bootstrap_r.png"))
 ```
 

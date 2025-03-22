@@ -23,7 +23,7 @@ options(scipen=999)
 ```{r}
 # read in LLM data
 path <- here("_data", "_intermediary_data", "wave_2")
-llm_df <- readRDS(here(path, "pilot_dfs.RDS"))
+llm_df <- readRDS(here(path, "llm_pilot_dfs.RDS"))
 rm(path)
 
 # format into list of dfs
@@ -43,75 +43,43 @@ rm(llm_df)
 
 ```{r}
 # compute means per item
-llm_mean_dfs <- lapply(llm_dfs, function(df_list){
-  lapply(df_list, function(df){
+llm_mean_dfs <-  list(
+  lyrics = lapply(llm_dfs[['lyrics']], function(df){
+    
     df %>% group_by(item_ID) %>%
       # compute mean for all columns
       dplyr::summarise(across(-c(model, text, run), mean, na.rm=T))
-  }) 
-})
+  })
+)
 ```
 
 ```{r}
 # read in participant data
-pilot_2_dfs <- readRDS(here("_data", "_raw_data", "wave_2", "pilot_2_dfs.RDS"))
+pilot_2_dfs <- readRDS(here("_data", "_participant_scores", "wave_2", "pilot_2_dfs.RDS"))
+pilot_2_df <- pilot_2_dfs[[1]]
 
-pilot_2_dfs[1:2] <- lapply(pilot_2_dfs[1:2], function(df){
-  df %>% filter(!item_ID == "attention") %>%
+#remove attention check items
+pilot_2_df <- pilot_2_df %>% filter(!item_ID == "attention") %>%
     select(item_ID, participant_ID, all_of(values), Ethnicity)
-})
 
-pilot_2_dfs[[3]] <- pilot_2_dfs[[3]] %>% filter(!item_ID == "attention") %>%
-  select(item_ID, participant_ID, all_of(values), `Political spectrum (us)`) %>%
-  rename(spectrum = "Political spectrum (us)")
-```
+rm(pilot_2_dfs)
 
-```{r}
 # compute mean per item
-pilot_2_mean_dfs <- lapply(pilot_2_dfs[1:2], function(df){
-  df %>% group_by(item_ID) %>%
+pilot_2_mean_df <- pilot_2_df %>% group_by(item_ID) %>%
     dplyr::summarise(
       across(-c(participant_ID, -Ethnicity), 
         mean, na.rm=T)) %>%
     select(-Ethnicity)
-})
 
-pilot_2_mean_dfs[3] <- lapply(pilot_2_dfs[3], function(df){
-  df %>% group_by(item_ID) %>%
-    dplyr::summarise(
-      across(-c(participant_ID, -spectrum), 
-        mean, na.rm=T)) %>%
-    select(-spectrum)
-})
-
-names(pilot_2_mean_dfs) <- c("lyrics", "speeches1", "speeches2")
-```
-
-
-```{r}
 # treat NAs as 0s:
-pilot_2_0na_dfs <- lapply(pilot_2_dfs, function(df){
-    df <- df %>% mutate(across(everything(), ~replace_na(.x, 0)))
-  })
+pilot_2_0na_df <- pilot_2_df %>% 
+  mutate(across(everything(), ~replace_na(.x, 0)))
 
-pilot_2_0na_mean_dfs <- lapply(pilot_2_0na_dfs[1:2], function(df){
-  
-  df %>% group_by(item_ID) %>%
+pilot_2_0na_mean_df <- pilot_2_0na_df %>% group_by(item_ID) %>%
     dplyr::summarise(
       across(-c(participant_ID, -Ethnicity), 
         mean, na.rm=T)) %>%
     select(-Ethnicity)
-})
-
-pilot_2_0na_mean_dfs[3] <- lapply(pilot_2_0na_dfs[3], function(df){
-  df %>% group_by(item_ID) %>%
-    dplyr::summarise(
-      across(-c(participant_ID, -spectrum), 
-        mean, na.rm=T)) %>%
-    select(-spectrum)
-})
-
-names(pilot_2_0na_mean_dfs) <- c("lyrics", "speeches1", "speeches2")
 ```
 
 ## overall correlations
@@ -125,29 +93,21 @@ pivot_values_long <- function(df){df %>%
 
 # pivot LLM dfs long
 llm_overall_dfs <- list(
-  lyrics = lapply(llm_mean_dfs[['lyrics']], pivot_values_long), 
-  speeches = lapply(llm_mean_dfs[['speeches']], pivot_values_long)
+  lyrics = lapply(llm_mean_dfs[['lyrics']], pivot_values_long)
 )
 
 # pivot participant dfs long, and merge
 participant_overall_dfs <- list(
   lyrics = merge(
     # merge means estimated w & w/out into same df
-    pilot_2_mean_dfs[[1]] %>% pivot_values_long() %>% rename(participant_mean = rating), 
-    pilot_2_0na_mean_dfs[[1]] %>% pivot_values_long() %>% rename(participant_mean_0na = rating), 
-      by = c("item_ID", "value")), 
-  speeches = merge(
-    pilot_2_mean_dfs[[3]] %>% pivot_values_long() %>% rename(participant_mean = rating), 
-     pilot_2_0na_mean_dfs[[3]] %>% pivot_values_long() %>% rename(participant_mean_0na = rating), 
-          by = c("item_ID", "value"))
+    pilot_2_mean_df %>% pivot_values_long() %>% rename(participant_mean = rating), 
+    pilot_2_0na_mean_df %>% pivot_values_long() %>% rename(participant_mean_0na = rating), 
+      by = c("item_ID", "value"))
 )
 
 overall_dfs <- list(
   lyrics = lapply(llm_overall_dfs[['lyrics']], function(df){
     merge(df, participant_overall_dfs[['lyrics']], by = c("item_ID", "value"))
-  }), 
-  speeches = lapply(llm_overall_dfs[['speeches']], function(df){
-    merge(df, participant_overall_dfs[['speeches']], by = c("item_ID", "value"))
   })
 )
 
@@ -163,12 +123,6 @@ overall_lyrics_cor <- list(
     cor(df$rating, df$participant_mean_0na)})
 ) %>% bind_rows(.id = "mean")
   
-overall_speeches_cor <- list(
-  mean = map_dfr(overall_dfs[['speeches']], function(df){
-    cor(df$rating, df$participant_mean)}), 
-  mean_0na = map_dfr(overall_dfs[['speeches']], function(df){
-    cor(df$rating, df$participant_mean_0na)})
-) %>% bind_rows(.id = "mean")
   
 plot_overall_cor <- function(cor_df, title){
   cor_df %>%
@@ -180,10 +134,10 @@ plot_overall_cor <- function(cor_df, title){
         theme_minimal() +
         ylab("") + xlab("") + ggtitle(title)}
 
-plot_grid(plot_overall_cor(overall_lyrics_cor, "lyrics"),
-plot_overall_cor(overall_speeches_cor, "speeches"), ncol = 1)
+plot_overall_cor(overall_lyrics_cor, "lyrics")
+ggsave(here("_images", "pilot_llm_participant_overall_cor.png"))
 
-rm(overall_lyrics_cor, overall_speeches_cor, plot_overall_cor)
+rm(overall_lyrics_cor, plot_overall_cor)
 ```
 
 # correlations among models
@@ -202,6 +156,9 @@ imap(overall_dfs, function(df_list, name){
   ggcorrplot(cor_mat, lab = T) + ggtitle(name)
   
 })
+
+ggsave(here("_images", "pilot_llm_overall_cor.png"))
+rm(overall_dfs)
 ```
 
 # correlations by value
@@ -209,29 +166,17 @@ imap(overall_dfs, function(df_list, name){
 ```{r}
 # merge dfs 
 llm_lyrics_dfs <- lapply(llm_mean_dfs[['lyrics']], function(df){
-    df <- merge(pilot_2_mean_dfs[[1]], df, by = "item_ID")
+    df <- merge(pilot_2_mean_df, df, by = "item_ID")
     colnames(df) <- gsub("\\.x", "", colnames(df))
     return(df)  
 })
-
-llm_speeches_dfs <- lapply(llm_mean_dfs[['speeches']], function(df){
-    df <- merge(pilot_2_mean_dfs[[3]], df, by = "item_ID")
-    colnames(df) <- gsub("\\.x", "", colnames(df))
-    return(df)
-  })
 
 
 llm_lyrics_0na_dfs <- lapply(llm_mean_dfs[['lyrics']], function(df){
-    df <- merge(pilot_2_0na_mean_dfs[[1]], df, by = "item_ID")
+    df <- merge(pilot_2_0na_mean_df, df, by = "item_ID")
     colnames(df) <- gsub("\\.x", "", colnames(df))
     return(df)  
 })
-
-llm_speeches_0na_dfs <- lapply(llm_mean_dfs[['speeches']], function(df){
-    df <- merge(pilot_2_0na_mean_dfs[[3]], df, by = "item_ID")
-    colnames(df) <- gsub("\\.x", "", colnames(df))
-    return(df)
-  })
 ```
 
 
@@ -266,13 +211,6 @@ overall_lyrics_cor_df <- bind_cols(overall_lyrics_cor_dfs) %>%
   rename(value = value...1) %>%
   mutate(text = "lyrics")
 
-overall_speeches_cor_dfs <- make_cor_df(llm_speeches_dfs)
-
-overall_speeches_cor_df <- bind_cols(overall_speeches_cor_dfs) %>%
-  select(-`value...3`, -`value...5`, -value...7, -value...9, -value...11) %>%
-  rename(value = value...1) %>%
-  mutate(text = "speeches")
-
 # format results for mean with NAs as 0
 overall_0na_lyrics_cor_dfs <- make_cor_df(llm_lyrics_0na_dfs)
 
@@ -280,13 +218,6 @@ overall_0na_lyrics_cor_df <- bind_cols(overall_0na_lyrics_cor_dfs) %>%
   select(-`value...3`, -`value...5`, -value...7, -value...9, -value...11) %>%
   rename(value = value...1) %>%
   mutate(text = "lyrics")
-
-overall_0na_speeches_cor_dfs <- make_cor_df(llm_speeches_0na_dfs)
-
-overall_0na_speeches_cor_df <- bind_cols(overall_0na_speeches_cor_dfs) %>%
-  select(-`value...3`, -`value...5`, -value...7, -value...9, -value...11) %>%
-  rename(value = value...1) %>%
-  mutate(text = "speeches")
 ```
 
 ```{r}
@@ -306,10 +237,8 @@ plot_cor <- function(cor_df){
 
 ```{r}
 plot_cor(overall_lyrics_cor_df)
-plot_cor(overall_0na_lyrics_cor_df)
-```
-```{r}
-plot_cor(overall_speeches_cor_df)
-plot_cor(overall_0na_speeches_cor_df)
-```
+ggsave(here("_images", "pilot_llm_participant_byvalue_cor.png"))
 
+plot_cor(overall_0na_lyrics_cor_df)
+ggsave(here("_images", "pilot_llm_participant_0na_byvalue_cor.png"))
+```

@@ -18,7 +18,7 @@ values <- c("POWER", "ACHIEVEMENT", "HEDONISM",
 # read in data
 path <- here("_data", "_intermediary_data", "wave_2")
 #list.files(path)
-llm_df <- readRDS(here(path, "pilot_dfs.RDS"))
+llm_df <- readRDS(here(path, "llm_pilot_dfs.RDS"))
 
 llm_df <- llm_df %>%
   pivot_longer(
@@ -211,8 +211,7 @@ by_row_bootstrap_reliability <- function(
 
 ```{r}
 bootstrap_dfs <- list(
-  lyrics = lapply(dfs[['lyrics']], by_row_bootstrap_reliability), 
-  speeches =  lapply(dfs[['speeches']], by_row_bootstrap_reliability))
+  lyrics = lapply(dfs[['lyrics']], by_row_bootstrap_reliability))
 
 saveRDS(bootstrap_dfs, here(path, "bootstrap_dfs.RDS"))
 ```

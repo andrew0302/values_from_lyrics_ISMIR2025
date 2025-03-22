@@ -73,8 +73,7 @@ llm_df <- llm_df %>%
 ```
 
 ```{r}
-#todo: rename LLM data to differentiate from participant data
-saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "pilot_dfs.RDS"))
+saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "llm_pilot_dfs.RDS"))
 ```
 
 ```{r}
@@ -125,6 +124,6 @@ rm(llm_df_1, llm_df_2)
 
 
 ```{r}
-saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "wave_df.RDS"))
+saveRDS(llm_df, file = here("_data", "_intermediary_data", "wave_2", "llm_wave_df.RDS"))
 ```
 

@@ -24,7 +24,7 @@ options(scipen=999)
 ```{r}
 # read in LLM data
 path <- here("_data", "_intermediary_data", "wave_2")
-llm_df <- readRDS(here(path, "wave_df.RDS"))
+llm_df <- readRDS(here(path, "llm_wave_df.RDS"))
 rm(path)
 
 # format into list of dfs
@@ -55,45 +55,35 @@ llm_mean_dfs <- lapply(llm_dfs, function(df_list){
 
 ```{r}
 # read in participant data
-wave_2_dfs <- readRDS(here("_data", "_raw_data", "wave_2", "wave_2_dfs.RDS"))
+wave_2_dfs <- readRDS(here("_data", "_participant_scores", "wave_2", "wave_2_dfs.RDS"))
 
 wave_2_dfs[1:2] <- lapply(wave_2_dfs[1:2], function(df){
   df %>% filter(!item_ID == "attention") %>%
-    select(item_ID, participant_ID, all_of(values), Ethnicity)
-})
-
-wave_2_dfs[3:4] <- lapply(wave_2_dfs[3:4], function(df){
-  df %>% filter(!item_ID == "attention") %>%
-    select(item_ID, participant_ID, all_of(values), `Political spectrum (us)`) %>%
-    rename(spectrum = "Political spectrum (us)")
+    select(item_ID, participant_ID, all_of(values))
 })
 ```
 
 ```{r}
 # compute mean per item
 wave_2_mean_dfs <- lapply(wave_2_dfs[1:2], function(df){
-  df %>% group_by(item_ID) %>%
+  df %>% 
+    group_by(item_ID) %>%
     dplyr::summarise(
-      across(-c(participant_ID, -Ethnicity), 
-        mean, na.rm=T)) %>%
-    select(-Ethnicity)
+      across(-c(participant_ID), 
+        mean, na.rm=T))
 })
-```
 
-
-```{r}
 # treat NAs as 0s:
-wave_2_0na_dfs <- lapply(wave_2_dfs, function(df){
+wave_2_0na_dfs <- lapply(wave_2_dfs[1:2], function(df){
     df <- df %>% mutate(across(everything(), ~replace_na(.x, 0)))
   })
 
-wave_2_0na_mean_dfs <- lapply(wave_2_0na_dfs[1:2], function(df){
+wave_2_0na_mean_dfs <- lapply(wave_2_0na_dfs, function(df){
   
   df %>% group_by(item_ID) %>%
     dplyr::summarise(
-      across(-c(participant_ID, -Ethnicity), 
-        mean, na.rm=T)) %>%
-    select(-Ethnicity)
+      across(-c(participant_ID), 
+        mean, na.rm=T))
 })
 ```
 
@@ -139,23 +129,6 @@ overall_dfs <- list(
 rm(pivot_values_long, participant_overall_dfs, llm_overall_dfs)
 ```
 
-```{r}
-# # add factor scores to overall dfs
-# 
-# dfs <- imap(overall_dfs[['lyrics1']], ~ rename(.x, !!.y := rating))
-# 
-# df <- reduce(dfs, full_join, by = c("item_ID", "value"))
-#   
-# df <- df %>% select(item_ID, value, `gemma2:9b`, phi4, `qwen2.5:7b`, participant_mean, participant_mean_0na)
-# 
-# fa <- fa(df%>%select(`gemma2:9b`, phi4, `qwen2.5:7b`), nfactors = 1, scores = "regression")
-# df$fa <- fa$scores %>% as.numeric()
-# 
-# df <- df %>% select(item_ID, value, fa, participant_mean, participant_mean_0na) %>%
-#   rename(rating = fa)
-# 
-# overall_dfs[['lyrics1']][['fa']] <- df
-```
 
 ```{r}
 plot_overall_cor <- function(cor_df, title){
@@ -178,25 +151,27 @@ overall_lyrics_cor <- list(
 ) %>% bind_rows(.id = "mean")
   
 plot_overall_cor(overall_lyrics_cor, "lyrics")
+ggsave(here("_images", "wave_llm_participant_overall_cor.png"))
 
-overall_lyrics_cor <- list(
-  mean = map_dfr(overall_dfs[['lyrics2']], function(df){
-    cor(df$rating, df$participant_mean, use = "complete.obs")}), 
-  
-  mean_0na = map_dfr(overall_dfs[['lyrics2']], function(df){
-    cor(df$rating, df$participant_mean_0na)})
-) %>% bind_rows(.id = "mean")
+# overall_lyrics_cor <- list(
+#   mean = map_dfr(overall_dfs[['lyrics2']], function(df){
+#     cor(df$rating, df$participant_mean, use = "complete.obs")}), 
+#   
+#   mean_0na = map_dfr(overall_dfs[['lyrics2']], function(df){
+#     cor(df$rating, df$participant_mean_0na)})
+# ) %>% bind_rows(.id = "mean")
+# 
+# plot_overall_cor(overall_lyrics_cor, "lyrics")
+# ggsave(here("_images", "wave_llm_participant_0na_overall_cor.png"))
 
-plot_overall_cor(overall_lyrics_cor, "lyrics")
-
-rm(overall_lyrics_cor, overall_speeches_cor, plot_overall_cor)
+rm(overall_lyrics_cor, plot_overall_cor)
 ```
 
 # correlations among models
 
 ```{r}
 # plot correlation matrix for models within text type
-imap(overall_dfs, function(df_list, name){
+imap(overall_dfs[1], function(df_list, name){
   # create single dataframe per text type
   overall_df <- bind_rows(df_list, .id = "model")
   
@@ -208,13 +183,18 @@ imap(overall_dfs, function(df_list, name){
   ggcorrplot(cor_mat, lab = T) + ggtitle(name)
   
 })
+
+ggsave(here("_images", "wave_llm_overall_cor.png"))
 ```
 
 # merge lyrics dfs
 
 ```{r}
-wave_2_0na_mean_df <- bind_rows(wave_2_0na_mean_dfs)
-wave_2_mean_df <- bind_rows(wave_2_mean_dfs)
+# wave_2_0na_mean_df <- bind_rows(wave_2_0na_mean_dfs)
+# wave_2_mean_df <- bind_rows(wave_2_mean_dfs)
+
+wave_2_0na_mean_df <- wave_2_0na_mean_dfs[[1]]
+wave_2_mean_df <- wave_2_mean_dfs[[1]]
 
 rm(wave_2_0na_mean_dfs, wave_2_mean_dfs)
 ```
@@ -223,13 +203,6 @@ rm(wave_2_0na_mean_dfs, wave_2_mean_dfs)
 # correlations by value
 
 ```{r}
-# fa <- overall_dfs[['lyrics1']][['fa']] %>% 
-#   select(item_ID, value, rating) %>% 
-#   pivot_wider(names_from = value, values_from = rating)
-# 
-# llm_mean_dfs[['lyrics']][['fa']] <- fa
-
-# merge dfs 
 llm_lyrics_dfs <- lapply(llm_mean_dfs[['lyrics']], function(df){
     df <- merge(wave_2_mean_df, df, by = "item_ID")
     colnames(df) <- gsub("\\.x", "", colnames(df))
@@ -301,14 +274,8 @@ plot_cor <- function(cor_df){
 
 ```{r}
 plot_cor(overall_lyrics_cor_df)
+ggsave(here("_images", "wave_llm_participant_byvalue_cor.png"))
+
 plot_cor(overall_0na_lyrics_cor_df)
+ggsave(here("_images", "wave_llm_participant_0na_byvalue_cor.png"))
 ```
-```{r}
-plot_cor(overall_speeches_cor_df)
-plot_cor(overall_0na_speeches_cor_df)
-```
-
-```{r}
-
-```
-
