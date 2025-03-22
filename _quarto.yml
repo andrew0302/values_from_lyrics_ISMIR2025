@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 resources:
-  - _images
+  - images
 
 website:
   title: "values_from_lyrics_ISMIR2025"
