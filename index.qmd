@@ -6,4 +6,4 @@ This is a companion repository for our ISMIR 2025 submission.
 
 
 
-![](docs/_images/pilot_llm_bootstrap_ICC2k_ICC2.png){fig-align="center"}
+![](/_images/pilot_llm_bootstrap_ICC2k_ICC2.png){fig-align="center"}
