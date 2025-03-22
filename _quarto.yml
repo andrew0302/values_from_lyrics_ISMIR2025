@@ -2,6 +2,9 @@ project:
   type: website
   output-dir: docs
 
+resources:
+  - _images
+
 website:
   title: "values_from_lyrics_ISMIR2025"
   navbar:
