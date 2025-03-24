@@ -2,7 +2,25 @@
 title: "Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models"
 ---
 
-This is a companion repository for our ISMIR 2025 submission. What follows are additional plots that didn't make it into the manuscript with accompanying explanations. 
+This is a companion repository for our ISMIR 2025 submission. What follows is material from the publication and additional plots that didn't make it into the manuscript with accompanying explanations. 
+
+# Participants
+
+We asked participants in our pilot study (n=100) about their lyric preferences, and whether they think it affects thier music listening behavior. 
+
+![](images/participant_survey.png){fig-align="center"}
+
+We asked the same participants how confident they were in their ratings, and how subjective they thought the task was. Although participants generally indicate high confidence in their ratings, they also indicate that they see this as a subjective task. 
+
+::: {.panel-tabset}
+
+# Confidence
+![](images/participant_confidence.png)
+# Subjectivity
+![](images/participant_subjectivty.png)
+:::
+
+
 
 # Model Selection, and Run Number Estimation: Pilot Study
 
