@@ -21,7 +21,9 @@ We asked the same participants how confident they were in their ratings, and how
 ![](images/participant_subjectivty.png)
 :::
 
+Means from participant ratings generally conformed to expectations in terms of patterns in the MDS plot. As explained in the paper, the test is to see whether values appear next to appropriate neighboring values. In nearly all cases, ours do. 
 
+![](images/participant_MDS_plot.png)
 
 # Model Selection, and Run Number Estimation: Pilot Study
 
