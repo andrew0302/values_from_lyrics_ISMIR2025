@@ -141,18 +141,26 @@ ul.task-list li input[type="checkbox"] {
 <p>To select a sub-set of models for our primary study, we first ran a pilot. 6 LLMs were selected, and prompted to extract scores of each of the 10 Schwartz values for the 14 song lyrics we used in our pilot.</p>
 <p>To estimate intra-model reliability, we collected scores from each model 10 times, and estimated intra-class coefficients, type 2. Although our primary analysis involves type 2k, where the expectation is that the estimand is the mean of ratings from several raters selected from a population of raters, we also estimated type 2, where the estimand is one of absolute agreement rather than general consensus.</p>
 <p>Type 2 gives us an idea of how much the individual ratings agree. Although they approach the typical threshold of .75 for most values in some of the models, they largely fail. We thus conclude we will likely need multiple runs per model.</p>
+<p>We see most models achieve above threshold reliability with 10 runs, in terms of absolute agreement (ICC2), and certainly with general consensus (ICC2k).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Absolute Agreement (ICC2) by model, by value</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Mean of k ratings agreement (ICC2k) by model, by value</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/pilot_llm_ICC2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>We see most models achieve above threshold reliability with 10 runs, with some showing better results than others.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/pilot_llm_ICC2k.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>In general, we observe that mean ratings from the 10 runs per model show moderate to high correlations with the means per 10 runs of other models.</p>
+</div>
+</div>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/pilot_llm_overall_cor.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
@@ -164,10 +172,18 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="images/pilot_llm_participant_overall_cor.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>We also examine correlations by value. We see moderate to high correlations overall, with gemma showing most correlations above .8.</p>
+<p>We also examine correlations by value. We see moderate to high correlations overall, with gemma showing most correlations above .8. We see similar results if we treat “NA” values as ’0’s.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">NAs as “0”s</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p><img src="images/pilot_llm_participant_byvalue_cor.png" class="img-fluid"></p>
-<p>We see similar results if we treat “NA” values as ’0’s:</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p><img src="images/pilot_llm_participant_0na_byvalue_cor.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
 <p>To determine which models to use and the number of runs we take a bootstrap approach (see paper for description). We observe that gemma, phi, and qwen seem to reach appropriate levels of reliability in about 3 runs, and show relatively high correlations with mean scores from participants ratings.</p>
 <p><img src="images/pilot_llm_bootstrap_ICC2k.png" class="img-fluid"></p>
 </section>
@@ -180,10 +196,18 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="images/wave_llm_overall_cor.png" class="img-fluid"></p>
 <p>They correlate moderately overall with means from participant ratings.</p>
 <p><img src="images/wave_llm_participant_overall_cor.png" class="img-fluid"></p>
-<p>And we see overall moderate to strong correlations by value with participant mean ratings:</p>
+<p>And we see overall moderate to strong correlations by value with participant mean ratings when NAs are left unchanged, and also when we treat NA values as 0.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">NAs as “0”s</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p><img src="images/wave_llm_participant_byvalue_cor.png" class="img-fluid"></p>
-<p>Also when we treat NA values as 0:</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p><img src="images/wave_llm_participant_0na_byvalue_cor.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
 <p>Prior work has suggested that the actual ‘ground truth’ is a list of values. In other words, that each person has a hierarchy of these 10 values. To further explore this with our lyrics, we treat each lyric excerpt as a ‘person’, by computing a ranked list from the mean ratings of each value. We then do the same with our LLM ratings, and compute ranked list correlations per song. Here we plot the distribution of ranked list correlations, per model.</p>
 <p><img src="images/wave_llm_participant_overall_kendall.png" class="img-fluid"></p>
 <p>Prior work has suggested that correlations of .2 are meaningful. Here we look at what proportion exceed that threshold, per model.</p>

@@ -12,13 +12,19 @@ To estimate intra-model reliability, we collected scores from each model 10 time
 
 Type 2 gives us an idea of how much the individual ratings agree. Although they approach the typical threshold of .75 for most values in some of the models, they largely fail. We thus conclude we will likely need multiple runs per model. 
 
+We see most models achieve above threshold reliability with 10 runs, in terms of absolute agreement (ICC2), and certainly with general consensus (ICC2k). 
+
+::: {.panel-tabset}
+
+## Absolute Agreement (ICC2) by model, by value
+
 ![](images/pilot_llm_ICC2.png){fig-align="center"}
 
-We see most models achieve above threshold reliability with 10 runs, with some showing better results than others. 
+## Mean of k ratings agreement (ICC2k) by model, by value
 
 ![](images/pilot_llm_ICC2k.png){fig-align="center"}
 
-In general, we observe that mean ratings from the 10 runs per model show moderate to high correlations with the means per 10 runs of other models. 
+:::
 
 ![](images/pilot_llm_overall_cor.png){fig-align="center"}
 
@@ -26,13 +32,20 @@ We computed means from participants in two ways. As discussed in the paper, we c
 
 ![](images/pilot_llm_participant_overall_cor.png){fig-align="center"}
 
-We also examine correlations by value. We see moderate to high correlations overall, with gemma showing most correlations above .8. 
+We also examine correlations by value. We see moderate to high correlations overall, with gemma showing most correlations above .8. We see similar results if we treat “NA” values as ’0’s. 
+
+::: {.panel-tabset}
+
+## NAs unchanged
 
 ![](images/pilot_llm_participant_byvalue_cor.png)
 
-We see similar results if we treat "NA" values as '0's:
+## NAs as "0"s
+
 
 ![](images/pilot_llm_participant_0na_byvalue_cor.png)
+
+:::
 
 To determine which models to use and the number of runs we take a bootstrap approach (see paper for description). We observe that gemma, phi, and qwen seem to reach appropriate levels of reliability in about 3 runs, and show relatively high correlations with mean scores from participants ratings. 
 
@@ -55,13 +68,20 @@ They correlate moderately overall with means from participant ratings.
 
 ![](images/wave_llm_participant_overall_cor.png)
 
-And we see overall moderate to strong correlations by value with participant mean ratings:
+
+And we see overall moderate to strong correlations by value with participant mean ratings when NAs are left unchanged, and also when we treat NA values as 0. 
+
+::: {.panel-tabset}
+
+# NAs unchanged
 
 ![](images/wave_llm_participant_byvalue_cor.png)
 
-Also when we treat NA values as 0:
+# NAs as "0"s
 
 ![](images/wave_llm_participant_0na_byvalue_cor.png)
+
+:::
 
 Prior work has suggested that the actual 'ground truth' is a list of values. In other words, that each person has a hierarchy of these 10 values. To further explore this with our lyrics, we treat each lyric excerpt as a 'person', by computing a ranked list from the mean ratings of each value. We then do the same with our LLM ratings, and compute ranked list correlations per song. Here we plot the distribution of ranked list correlations, per model. 
 
