@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models – values_from_lyrics_ISMIR2025</title>
+<title>Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models – ISMIR 2025</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -79,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">values_from_lyrics_ISMIR2025</span>
+    <span class="navbar-title">ISMIR 2025</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -108,7 +108,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#model-selection-and-run-number-estimation-pilot-study" id="toc-model-selection-and-run-number-estimation-pilot-study" class="nav-link active" data-scroll-target="#model-selection-and-run-number-estimation-pilot-study">Model Selection, and Run Number Estimation: Pilot Study</a></li>
+  <li><a href="#participants" id="toc-participants" class="nav-link active" data-scroll-target="#participants">Participants</a></li>
+  <li><a href="#model-selection-and-run-number-estimation-pilot-study" id="toc-model-selection-and-run-number-estimation-pilot-study" class="nav-link" data-scroll-target="#model-selection-and-run-number-estimation-pilot-study">Model Selection, and Run Number Estimation: Pilot Study</a></li>
   <li><a href="#llm-correlations-with-participant-ratings-main-study" id="toc-llm-correlations-with-participant-ratings-main-study" class="nav-link" data-scroll-target="#llm-correlations-with-participant-ratings-main-study">LLM correlations with Participant ratings: Main Study</a></li>
   </ul>
 </nav>
@@ -135,7 +136,28 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is a companion repository for our ISMIR 2025 submission. What follows are additional plots that didn’t make it into the manuscript with accompanying explanations.</p>
+<p>This is a companion repository for our ISMIR 2025 submission. What follows is material from the publication and additional plots that didn’t make it into the manuscript with accompanying explanations.</p>
+<section id="participants" class="level1">
+<h1>Participants</h1>
+<p>We asked participants in our pilot study (n=100) about their lyric preferences, and whether they think it affects thier music listening behavior.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/participant_survey.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>We asked the same participants how confident they were in their ratings, and how subjective they thought the task was. Although participants generally indicate high confidence in their ratings, they also indicate that they see this as a subjective task.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Confidence</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Subjectivity</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p><img src="images/participant_confidence.png" class="img-fluid"></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p><img src="images/participant_subjectivty.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+</section>
 <section id="model-selection-and-run-number-estimation-pilot-study" class="level1">
 <h1>Model Selection, and Run Number Estimation: Pilot Study</h1>
 <p>To select a sub-set of models for our primary study, we first ran a pilot. 6 LLMs were selected, and prompted to extract scores of each of the 10 Schwartz values for the 14 song lyrics we used in our pilot.</p>
@@ -143,16 +165,16 @@ ul.task-list li input[type="checkbox"] {
 <p>Type 2 gives us an idea of how much the individual ratings agree. Although they approach the typical threshold of .75 for most values in some of the models, they largely fail. We thus conclude we will likely need multiple runs per model.</p>
 <p>We see most models achieve above threshold reliability with 10 runs, in terms of absolute agreement (ICC2), and certainly with general consensus (ICC2k).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Absolute Agreement (ICC2) by model, by value</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Mean of k ratings agreement (ICC2k) by model, by value</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Absolute Agreement (ICC2) by model, by value</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Mean of k ratings agreement (ICC2k) by model, by value</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/pilot_llm_ICC2.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/pilot_llm_ICC2k.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
@@ -174,12 +196,12 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>We also examine correlations by value. We see moderate to high correlations overall, with gemma showing most correlations above .8. We see similar results if we treat “NA” values as ’0’s.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">NAs as “0”s</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">NAs as “0”s</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p><img src="images/pilot_llm_participant_byvalue_cor.png" class="img-fluid"></p>
 </div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p><img src="images/pilot_llm_participant_0na_byvalue_cor.png" class="img-fluid"></p>
 </div>
 </div>
@@ -198,12 +220,12 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="images/wave_llm_participant_overall_cor.png" class="img-fluid"></p>
 <p>And we see overall moderate to strong correlations by value with participant mean ratings when NAs are left unchanged, and also when we treat NA values as 0.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">NAs as “0”s</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">NAs unchanged</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">NAs as “0”s</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p><img src="images/wave_llm_participant_byvalue_cor.png" class="img-fluid"></p>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p><img src="images/wave_llm_participant_0na_byvalue_cor.png" class="img-fluid"></p>
 </div>
 </div>

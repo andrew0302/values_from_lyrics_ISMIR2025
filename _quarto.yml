@@ -6,7 +6,7 @@ resources:
   - images
 
 website:
-  title: "values_from_lyrics_ISMIR2025"
+  title: "ISMIR 2025"
   navbar:
     left:
       - href: index.qmd

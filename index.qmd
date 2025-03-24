@@ -16,6 +16,7 @@ We asked the same participants how confident they were in their ratings, and how
 
 # Confidence
 ![](images/participant_confidence.png)
+
 # Subjectivity
 ![](images/participant_subjectivty.png)
 :::
