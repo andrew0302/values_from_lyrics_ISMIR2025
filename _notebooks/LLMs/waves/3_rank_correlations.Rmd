@@ -10,7 +10,11 @@ library('corrr')      # correlation logistics
 library('ggcorrplot') # plot correlations
 library('cowplot')    # merge plots
 library('psych')
-library('ggridges')        # visualization
+library('ggridges')   # visualization
+library('viridis')    # color pallette
+library('knitr')      # nice tables
+library('kableExtra') # even nicer tables
+
 
 values <- c("POWER", "ACHIEVEMENT", "HEDONISM",  
             "STIMULATION", "SELF", "UNIVERSALISM", 
@@ -25,7 +29,7 @@ options(scipen=999)
 ```{r}
 # read in LLM data
 path <- here("_data", "_intermediary_data", "wave_2")
-llm_df <- readRDS(here(path, "wave_df.RDS"))
+llm_df <- readRDS(here(path, "llm_wave_df.RDS"))
 rm(path)
 
 # format into list of dfs
@@ -64,50 +68,39 @@ llm_mean_rank_dfs <- lapply(llm_dfs, function(df_list){
 llm_mean_rank_dfs[['lyrics']] <- imap(llm_mean_rank_dfs[['lyrics']], ~ rename(.x, !!.y := ranks))
 
 llm_mean_rank_df <- reduce(llm_mean_rank_dfs[['lyrics']], full_join, by = c("item_ID", "value"))
+
+rm(llm_mean_rank_dfs)
 ```
 
 ```{r}
 # read in participant data
-wave_2_dfs <- readRDS(here("_data", "_raw_data", "wave_2", "wave_2_dfs.RDS"))
+wave_2_dfs <- readRDS(here("_data", "_participant_scores", "wave_2", "wave_2_dfs.RDS"))
 
 wave_2_dfs[1:2] <- lapply(wave_2_dfs[1:2], function(df){
   df %>% filter(!item_ID == "attention") %>%
-    select(item_ID, participant_ID, all_of(values), Ethnicity) 
+    select(item_ID, participant_ID, all_of(values)) 
 })
 
-wave_2_dfs[3:4] <- lapply(wave_2_dfs[3:4], function(df){
-  df %>% filter(!item_ID == "attention") %>%
-    select(item_ID, participant_ID, all_of(values), `Political spectrum (us)`) %>%
-    rename(spectrum = "Political spectrum (us)")
-})
+wave_2_df <- wave_2_dfs[[1]]
+wave_2_0na_df <- wave_2_df %>% mutate(across(everything(), ~replace_na(.x, 0)))
 
-# treat NAs as 0s:
-wave_2_0na_dfs <- lapply(wave_2_dfs, function(df){
-    df <- df %>% mutate(across(everything(), ~replace_na(.x, 0)))
-  })
-
-wave_2_0na_mean_rank_dfs <- lapply(wave_2_0na_dfs[1:2], function(df){
-  
-  df %>% group_by(item_ID) %>%
+wave_2_0na_mean_rank_df <- wave_2_0na_df %>% group_by(item_ID) %>%
     dplyr::summarise(
-      across(-c(participant_ID, -Ethnicity), 
+      across(-c(participant_ID), 
         mean, na.rm=T)) %>%
-    select(-Ethnicity) %>%
-          pivot_longer(cols = all_of(values), 
-                 names_to = "value", 
-                 values_to = "rating") %>%
+      pivot_longer(cols = all_of(values), 
+                   names_to = "value", 
+                   values_to = "rating") %>%
       group_by(item_ID) %>%
       mutate(ranks = 11-rank(rating))%>%
       arrange(as.numeric(ranks),.by_group = TRUE) %>%
       ungroup() %>% select(-rating)
-    
-})
 
-rm(wave_2_dfs, wave_2_0na_dfs)
+rm(wave_2_dfs, wave_2_0na_df)
 ```
 
 ```{r}
-df <- merge(llm_mean_rank_df, wave_2_0na_mean_rank_dfs[['lyrics1']], by = c("item_ID", "value"))
+df <- merge(llm_mean_rank_df, wave_2_0na_mean_rank_df, by = c("item_ID", "value"))
 df <- df %>% rename(participants = ranks)
 
 correlate(df, method = "kendall")
@@ -119,28 +112,31 @@ kendall_df <- df %>% pivot_longer(cols = c(`gemma2:9b`, phi4, `qwen2.5:7b`),
 ```
 
 ```{r}
+my_colors <- viridis(option = "inferno", n = 10)
+
 kendall_df %>%
   ggplot(aes(kendall_t, model, fill = model)) +
     geom_density_ridges(alpha = 0.6) +
-  scale_fill_viridis_d(option = "inferno") +
-  theme_minimal() +
-  ylab('')+
-  xlab("Kendall's Tau") +
-  theme(legend.position = "none")
+    #scale_fill_viridis_d(option = "inferno") +
+  scale_fill_manual(values = c(my_colors[2], my_colors[6], my_colors[8])) +
+    theme_minimal() +
+    ylab('')+
+    xlab("Kendall's Tau") +
+    theme(legend.position = "none")
+
+ggsave(here("images", "wave_llm_participant_overall_kendall.png"))
 ```
 
 ```{r}
-summary_df <- kendall_df %>% group_by(model) %>%
-  summarize(mean = mean(kendall_t, na.rm=T), 
-            sd = sd(kendall_t, na.rm=T), 
-            median = median(kendall_t, na.rm=T))
-```
-
-```{r}
-kendall_df %>% 
+table <- kendall_df %>% 
   group_by(model) %>%
   filter(kendall_t >= .2) %>%
   count() %>%
-  mutate(prop = n / 400 * 100)
+  mutate(`prop` = n / 400 * 100) %>%
+  kable(format = "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE, position = "center") %>%
+  footnote(general = "Note. n = number of songs; prop >= 2 = proportion of songs")
+
+saveRDS(table, here("images", "wave_llm_participant_kendall_proportion.RDS"))
 ```
 

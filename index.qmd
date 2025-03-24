@@ -62,3 +62,16 @@ And we see overall moderate to strong correlations by value with participant mea
 Also when we treat NA values as 0:
 
 ![](images/wave_llm_participant_0na_byvalue_cor.png)
+
+Prior work has suggested that the actual 'ground truth' is a list of values. In other words, that each person has a hierarchy of these 10 values. To further explore this with our lyrics, we treat each lyric excerpt as a 'person', by computing a ranked list from the mean ratings of each value. We then do the same with our LLM ratings, and compute ranked list correlations per song. Here we plot the distribution of ranked list correlations, per model. 
+
+![](images/wave_llm_participant_overall_kendall.png)
+
+Prior work has suggested that correlations of .2 are meaningful. Here we look at what proportion exceed that threshold, per model. 
+
+```{r wave_llm_participant_kendall_proportions}
+library(here)
+
+table <- readRDS(here("images", "wave_llm_participant_kendall_proportion.RDS"))
+table
+```
