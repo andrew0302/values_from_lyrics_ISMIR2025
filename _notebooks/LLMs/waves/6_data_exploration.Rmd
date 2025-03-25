@@ -45,7 +45,7 @@ wave_df <- wave_df %>% mutate(subjective = case_when(
 ```{r}
 # self-rated confidence in scores
 p1 <-  wave_df %>% ggplot(aes(x=c)) +
-    geom_histogram(bins = 5) +
+    geom_histogram(bins = 5, alpha = .3, color = "black") +
   scale_y_continuous(limits = c(0, 3000)) +
     theme_minimal() +
     xlab("Confidence")
@@ -53,7 +53,7 @@ p1 <-  wave_df %>% ggplot(aes(x=c)) +
 p2 <- wave_df %>% 
   select(subjective, participant_ID) %>% unique() %>%
   ggplot(aes(x=subjective)) +
-    geom_histogram(bins = 7) +
+    geom_histogram(bins = 7, alpha = .3, color = "black") +
     theme_minimal() +
     xlab("Subjectivity")
 
