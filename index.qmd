@@ -10,16 +10,13 @@ We asked participants in our pilot study (n=100) about their lyric preferences, 
 
 ![](images/participant_survey.png){fig-align="center"}
 
-We asked the same participants how confident they were in their ratings, and how subjective they thought the task was. Although participants generally indicate high confidence in their ratings, they also indicate that they see this as a subjective task. 
+In our main annotation data collection wave, we asked participants how confident they were in their ratings for each song, and how subjective they thought the task was overall. Although participants generally indicate high confidence in each of their ratings, they also indicate that they see this overall as a subjective task. 
 
-::: {.panel-tabset}
 
-# Confidence
-![](images/participant_confidence.png)
 
-# Subjectivity
-![](images/participant_subjectivty.png)
-:::
+
+![](images/participant_confidence_subjectivity.png){fig-align="center"}
+
 
 Means from participant ratings in our main wave of annotation data collection generally conformed to expectations in terms of patterns in the MDS plot. As explained in the paper, the test is to see whether values appear next to appropriate neighboring values. In nearly all cases, ours do. 
 

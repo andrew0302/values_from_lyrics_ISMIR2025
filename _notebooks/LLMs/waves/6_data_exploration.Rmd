@@ -1,0 +1,80 @@
+---
+title: "reliability_comparison"
+author: "Andrew M. Demetriou"
+---
+
+```{r}
+library("here")           # file logistics
+library("tidyverse")      # code logistics
+library("ggridges")       # joy plots
+library("patchwork")      # merging plots
+library("naniar")         # analyzing missingness
+library('tidytext')       # text mining
+
+wave_dfs <- readRDS(file = here("_data", "_participant_scores", "wave_2", "wave_2_dfs.RDS"))
+wave_df <- wave_dfs[[1]]
+rm(wave_dfs)
+
+values <- c("POWER", "ACHIEVEMENT", "HEDONISM",  
+            "STIMULATION", "SELF", "UNIVERSALISM", 
+            "BENEVOLENCE", "TRADITION",  
+            "CONFORMITY", "SECURITY")
+```
+
+```{r}
+wave_df <- wave_df %>% mutate(c = case_when(
+    c == "Completely Confident" ~ 5, 
+    c == "Somewhat Confident" ~ 4, 
+    c == "Neither Confident nor Unconfident" ~ 3, 
+    c == "Somewhat Unconfident" ~ 2, 
+    c == "Completely Unconfident" ~ 1
+  ))
+
+wave_df <- wave_df %>% mutate(subjective = case_when(
+    `subjective` == "Completely subjective" ~ 7, 
+    `subjective` == "Very subjective" ~ 6, 
+    `subjective` == "Somewhat subjective" ~ 5, 
+    `subjective` == "Neither subjective nor objective" ~ 4, 
+    `subjective` == "Somewhat objective" ~ 3, 
+    `subjective` == "Very objective" ~ 2, 
+    `subjective` == "Completely objective" ~ 1
+  ))
+```
+
+```{r}
+# self-rated confidence in scores
+p1 <-  wave_df %>% ggplot(aes(x=c)) +
+    geom_histogram(bins = 5) +
+  scale_y_continuous(limits = c(0, 3000)) +
+    theme_minimal() +
+    xlab("Confidence")
+
+p2 <- wave_df %>% 
+  select(subjective, participant_ID) %>% unique() %>%
+  ggplot(aes(x=subjective)) +
+    geom_histogram(bins = 7) +
+    theme_minimal() +
+    xlab("Subjectivity")
+
+(p1+p2)
+
+ggsave(here("images", "participant_confidence_subjectivity.png"))
+
+rm(p1, p2)
+```
+
+
+
+```{r}
+df %>%
+  ggplot(aes(x=response, y=question, fill = question, alpha = .7)) +
+    geom_density_ridges() +
+    theme_minimal() +
+    scale_x_continuous(breaks = seq(1, 7, 1)) +
+    scale_fill_viridis_d(option = "magma") +
+    scale_y_discrete(labels = function(x) str_wrap(x, width = 35)) +
+    ylab("") + xlab("Response") +
+    theme(legend.position="none", axis.text.y = element_text(size = 12))
+
+ggsave(here("images", "participant_survey.png"))
+```

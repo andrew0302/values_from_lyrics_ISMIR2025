@@ -21,44 +21,6 @@ values <- c("POWER", "ACHIEVEMENT", "HEDONISM",
             "CONFORMITY", "SECURITY")
 ```
 
-
-```{r}
-# of NAs
-
-plots <- lapply(pilot_dfs, function(df){
-  gg_miss_var(df%>%select(all_of(values)), show_pct = TRUE) + ylim(0, 100)
-})
-
-plots[['lyrics']] + ggtitle('lyrics')
-
-ggsave(here("images", "participant_NA_prop.png"))
-```
-
-
-```{r}
-# distribution of scores by value 
-
-plots <- lapply(pilot_dfs, function(df){
-  
-  df <- df %>% select(item_ID, participant_ID, all_of(values))%>%
-                pivot_longer(cols = values, names_to = 'value', values_to = 'score')
-  
-  df %>%
-    ggplot(aes(x=score, y=value, fill = value, alpha = .7)) +
-    geom_density_ridges() +
-    theme_minimal() +
-    theme(legend.position="none") +
-    scale_fill_viridis_d(option = "magma") +
-    #xlim(-1, 7) 
-    scale_x_continuous(breaks = seq(-1, 7, 1))
-})
-
-plots[['lyrics']]
-
-ggsave(here("images", "participant_rating_by_value.png"))
-```
-
-
 ```{r}
 pilot_dfs <- lapply(pilot_dfs, function(df){
   
