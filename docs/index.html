@@ -109,8 +109,14 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#participants" id="toc-participants" class="nav-link active" data-scroll-target="#participants">Participants</a></li>
-  <li><a href="#model-selection-and-run-number-estimation-pilot-study" id="toc-model-selection-and-run-number-estimation-pilot-study" class="nav-link" data-scroll-target="#model-selection-and-run-number-estimation-pilot-study">Model Selection, and Run Number Estimation: Pilot Study</a></li>
-  <li><a href="#llm-correlations-with-participant-ratings-main-study" id="toc-llm-correlations-with-participant-ratings-main-study" class="nav-link" data-scroll-target="#llm-correlations-with-participant-ratings-main-study">LLM correlations with Participant ratings: Main Study</a></li>
+  <li><a href="#pilot-study-model-selection-and-run-number-estimation" id="toc-pilot-study-model-selection-and-run-number-estimation" class="nav-link" data-scroll-target="#pilot-study-model-selection-and-run-number-estimation">Pilot Study: Model Selection and Run Number Estimation</a></li>
+  <li><a href="#main-study-llm-correlations-with-participant-ratings" id="toc-main-study-llm-correlations-with-participant-ratings" class="nav-link" data-scroll-target="#main-study-llm-correlations-with-participant-ratings">Main Study: LLM correlations with Participant ratings</a>
+  <ul class="collapse">
+  <li><a href="#overall-reliabilies" id="toc-overall-reliabilies" class="nav-link" data-scroll-target="#overall-reliabilies">Overall Reliabilies</a></li>
+  <li><a href="#rating-distributions-llms-vs.-participants" id="toc-rating-distributions-llms-vs.-participants" class="nav-link" data-scroll-target="#rating-distributions-llms-vs.-participants">Rating Distributions: LLMs vs.&nbsp;Participants</a></li>
+  <li><a href="#mds-plots-llms-vs.-participants" id="toc-mds-plots-llms-vs.-participants" class="nav-link" data-scroll-target="#mds-plots-llms-vs.-participants">MDS Plots: LLMs vs.&nbsp;Participants</a></li>
+  <li><a href="#correlations" id="toc-correlations" class="nav-link" data-scroll-target="#correlations">Correlations</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -152,8 +158,8 @@ ul.task-list li input[type="checkbox"] {
 </figure>
 </div>
 </section>
-<section id="model-selection-and-run-number-estimation-pilot-study" class="level1">
-<h1>Model Selection, and Run Number Estimation: Pilot Study</h1>
+<section id="pilot-study-model-selection-and-run-number-estimation" class="level1">
+<h1>Pilot Study: Model Selection and Run Number Estimation</h1>
 <p>To select a sub-set of models for our primary study, we first ran a pilot. 6 LLMs were selected, and prompted to extract scores of each of the 10 Schwartz values for the 14 song lyrics we used in our pilot.</p>
 <p>To estimate intra-model reliability, we collected scores from each model 10 times, and estimated intra-class coefficients, type 2. Although our primary analysis involves type 2k, where the expectation is that the estimand is the mean of ratings from several raters selected from a population of raters, we also estimated type 2, where the estimand is one of absolute agreement rather than general consensus.</p>
 <p>Type 2 gives us an idea of how much the individual ratings agree. Although they approach the typical threshold of .75 for most values in some of the models, they largely fail. We thus conclude we will likely need multiple runs per model.</p>
@@ -203,11 +209,16 @@ ul.task-list li input[type="checkbox"] {
 <p>To determine which models to use and the number of runs we take a bootstrap approach (see paper for description). We observe that gemma, phi, and qwen seem to reach appropriate levels of reliability in about 3 runs, and show relatively high correlations with mean scores from participants ratings.</p>
 <p><img src="images/pilot_llm_bootstrap_ICC2k.png" class="img-fluid"></p>
 </section>
-<section id="llm-correlations-with-participant-ratings-main-study" class="level1">
-<h1>LLM correlations with Participant ratings: Main Study</h1>
+<section id="main-study-llm-correlations-with-participant-ratings" class="level1">
+<h1>Main Study: LLM correlations with Participant ratings</h1>
 <p>Our main study presents results using 400 song lyrics. We gathered a median 15 ratings from participants in the US, stratified by the 4 most common ethnicities. We then compute means per value per song. We then prompt our subset of 3 LLMs to rate each song 3 times per value.</p>
+<section id="overall-reliabilies" class="level2">
+<h2 class="anchored" data-anchor-id="overall-reliabilies">Overall Reliabilies</h2>
 <p>We first asses the reliability of our subset of LLMs over three runs. Overall we see that the models achieve satisfactory reliability for almost all values, with phi and qwen showing relatively poorer scores on CONFORMITY, and phi scores on UNIVERSALISM.</p>
 <p><img src="images/wave_llm_ICC2k.png" class="img-fluid"></p>
+</section>
+<section id="rating-distributions-llms-vs.-participants" class="level2">
+<h2 class="anchored" data-anchor-id="rating-distributions-llms-vs.-participants">Rating Distributions: LLMs vs.&nbsp;Participants</h2>
 <p>Participants in our main study often rated values as missing, which makes sense given that lyrics are short snippets, and gaining a complete perspective of the values of the “Speaker” is unlikely.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -241,6 +252,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+</section>
+<section id="mds-plots-llms-vs.-participants" class="level2">
+<h2 class="anchored" data-anchor-id="mds-plots-llms-vs.-participants">MDS Plots: LLMs vs.&nbsp;Participants</h2>
 <p>Means from participant ratings in our main wave of annotation data collection generally conformed to expectations in terms of patterns in the MDS plot. As explained in the paper, the test is to see whether values appear next to appropriate neighboring values. In nearly all cases, ours do.</p>
 <p><img src="images/wave_participant_MDS_plot.png" class="img-fluid"></p>
 <p>Understandably, the MDS plots for the models appear quite distorted.</p>
@@ -270,6 +284,9 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+</section>
+<section id="correlations" class="level2">
+<h2 class="anchored" data-anchor-id="correlations">Correlations</h2>
 <p>The means of 3 runs for the three model scores correlate moderately with each other. <img src="images/wave_llm_overall_cor.png" class="img-fluid"></p>
 <p>They correlate moderately overall with means from participant ratings.</p>
 <p><img src="images/wave_llm_participant_overall_cor.png" class="img-fluid"></p>
@@ -330,6 +347,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
