@@ -11,6 +11,7 @@ library("patchwork")      # merging plots
 library("naniar")         # analyzing missingness
 library('tidytext')       # text mining
 library('viridis')        # color pallette
+library('cowplot')
 
 wave_dfs <- readRDS(file = here("_data", "_participant_scores", "wave_2", "wave_2_dfs.RDS"))
 wave_df <- wave_dfs[[1]]
@@ -86,7 +87,7 @@ colors <- viridis(10, option = "magma")
 
 plot <-  df %>%
     ggplot(aes(x=rating, fill = isna)) +
-    geom_histogram(stat="count", bins = 9) +
+    geom_histogram(stat="count", bins = 9, alpha = .7) +
     scale_fill_manual(values = c(colors[4], colors [9])) +
     theme_minimal() +
     theme(legend.position="none")
@@ -128,7 +129,7 @@ plots <- imap(llm_dfs[['lyrics']], function(df, name){
   # Histogram by value (faceted)
   p_facet <- df %>%
     ggplot(aes(x = rating, fill = isna)) +
-    geom_histogram(stat = "count", bins = 11) +
+    geom_histogram(stat = "count", bins = 11, alpha = .7) +
     scale_fill_manual(values = colors[4]) +
     theme_minimal() +
     theme(legend.position = "none") +
@@ -138,7 +139,7 @@ plots <- imap(llm_dfs[['lyrics']], function(df, name){
   # Combined histogram
   p_total <- df %>%
     ggplot(aes(x = rating, fill = isna)) +
-    geom_histogram(stat = "count", bins = 11) +
+    geom_histogram(stat = "count", bins = 11, alpha = .7) +
     scale_fill_manual(values = colors[4]) +
     theme_minimal() +
     theme(legend.position = "none") +

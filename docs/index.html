@@ -157,6 +157,15 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="images/participant_confidence_subjectivity.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
+<p>To determine the number of ratings per song, we used a bootstrapping procedure. We subsampled participants in increments of 5, 25 times each, and estimated inter-rater reliability, using the intra-class correlation coefficient. As we intend to use the mean of several ratings, we use type 2k. In addition, we compute the pearson correlation between the mean ratings of subsamples, and the overall mean.</p>
+<p>We set a threshold at pearson correlations of .9, and ICC2k correlations at .75. We observe that we exceed the threshold at 15 ratings.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/pilot_participants_bootstrap_ICC2k_r.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>In our main data collection wave, we observe that the ICC2 scores show that participants don’t indicate the same score for the lyrics they annotate. However, the ICC2k scores are high, indicating that the scores from participants correlate.</p>
+<p><img src="images/wave_participants_ICC2_ICC2k.png" class="img-fluid"></p>
 </section>
 <section id="pilot-study-model-selection-and-run-number-estimation" class="level1">
 <h1>Pilot Study: Model Selection and Run Number Estimation</h1>
