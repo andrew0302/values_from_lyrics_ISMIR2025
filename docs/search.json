@@ -18,7 +18,7 @@
     "href": "index.html#rating-distributions-llms-vs.-participants",
     "title": "Towards Automatic Personal Value Estimation in Song Lyrics with Large Language Models",
     "section": "Rating Distributions: LLMs vs. Participants",
-    "text": "Rating Distributions: LLMs vs. Participants\nParticipants in our main study often rated values as missing, which makes sense given that lyrics are short snippets, and gaining a complete perspective of the values of the “Speaker” is unlikely.\n\n\n\n\n\nLLMs in our main study show a rather different distribution, with no NA values, but values that generally sit on the low end of the scale:\n\ngemmaphiqwen"
+    "text": "Rating Distributions: LLMs vs. Participants\nParticipants in our main study often rated values as missing, which makes sense given that lyrics are short snippets, and gaining a complete perspective of the values of the “Speaker” is unlikely.\n Hedonism, Self-Direction, and Stimulation the lowest number of NAs.\n\n\n\n\n\nLLMs in our main study show a rather different distribution, with no NA values, but values that generally sit on the low end of the scale:\n\ngemmaphiqwen"
   },
   {
     "objectID": "index.html#mds-plots-llms-vs.-participants",

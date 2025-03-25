@@ -1,0 +1,45 @@
+---
+title: "reliability_comparison"
+author: "Andrew M. Demetriou"
+---
+
+```{r}
+library("here")
+library("tidyverse")
+library("cowplot")
+library("psych")
+```
+
+```{r}
+file_path <- here("_data", "_intermediary_data")
+
+pilot_2_lyrics_by_row_df <- readRDS(here(file_path, "pilot_2_lyrics_by_row_df.RDS"))
+
+rm(file_path)
+```
+
+```{r}
+plot_raters <- function(df, metric, name){
+  df %>%
+    ggplot(aes(x = {{metric}}, color = as.factor(n))) +
+    geom_line(stat = "density", alpha = .5, size = .75) +
+    xlim(0, 1) +
+    scale_color_viridis_d(option = "plasma") +
+    labs(
+      #title = paste("     ", name, "by Rater N\n"), 
+      color = "Rater N\n") +
+    theme_minimal()
+}
+```
+
+```{r}
+df <- pilot_2_lyrics_by_row_df %>% filter(n <= 25)
+plot_grid(
+  plot_raters(df, metric = r, name = "Lyrics Pilot: r") + 
+    geom_vline(xintercept = 0.9, color = "red", size = .4 ) + 
+    ggtitle("Pilot: Lyrics"), 
+  plot_raters(df, metric = ICC2k, name = "ICC2k") +  geom_vline(xintercept = 0.75, color = "red", size = .4 ), 
+  ncol = 1)
+
+ggsave(here("images", "pilot_participants_bootstrap_ICC2k_r.png"))
+```

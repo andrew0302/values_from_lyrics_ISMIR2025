@@ -15,10 +15,15 @@ In our main annotation data collection wave, we asked participants how confident
 
 ![](images/participant_confidence_subjectivity.png){fig-align="center"}
 
+To determine the number of ratings per song, we used a bootstrapping procedure. We subsampled participants in increments of 5, 25 times each, and estimated inter-rater reliability, using the intra-class correlation coefficient. As we intend to use the mean of several ratings, we use type 2k. In addition, we compute the pearson correlation between the mean ratings of subsamples, and the overall mean. 
 
+We set a threshold at pearson correlations of .9, and ICC2k correlations at .75. We observe that we exceed the threshold at 15 ratings. 
 
+![](images/pilot_participants_bootstrap_ICC2k_r.png){fig-align="center"}
 
+In our main data collection wave, we observe that the ICC2 scores show that participants don't indicate the same score for the lyrics they annotate. However, the ICC2k scores are high, indicating that the scores from participants correlate. 
 
+![](images/wave_participants_ICC2_ICC2k.png)
 
 # Pilot Study: Model Selection and Run Number Estimation
 
@@ -81,6 +86,10 @@ We first asses the reliability of our subset of LLMs over three runs. Overall we
 ## Rating Distributions: LLMs vs. Participants
 
 Participants in our main study often rated values as missing, which makes sense given that lyrics are short snippets, and gaining a complete perspective of the values of the "Speaker" is unlikely. 
+
+![](images/wave_participant_missingness.png){fig-align="center"}
+Hedonism, Self-Direction, and Stimulation the lowest number of NAs. 
+
 
 ![](images/wave_participant_rating_distribution.png){fig-align="center"}
 

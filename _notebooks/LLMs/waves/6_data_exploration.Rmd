@@ -65,15 +65,23 @@ rm(p1, p2)
 ```
 
 ```{r}
+wave_df %>% select(all_of(values)) %>% gg_miss_var(show_pct = T) + 
+  scale_y_continuous(limits=c(0,100))
+
+ggsave(here("images", "wave_participant_missingness.png"))
+```
+
+```{r}
 df <- wave_df %>% select(item_ID, participant_ID, all_of(values)) %>% 
   pivot_longer(cols = all_of(values), names_to = "value", values_to = "rating")
-
-df$isna <- is.na(df$rating)
-df$rating <- addNA(df$rating)
 ```
 
 
+
 ```{r}
+df$isna <- is.na(df$rating)
+df$rating <- addNA(df$rating)
+
 colors <- viridis(10, option = "magma")
 
 plot <-  df %>%
