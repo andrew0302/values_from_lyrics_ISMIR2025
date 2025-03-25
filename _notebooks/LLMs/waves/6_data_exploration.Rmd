@@ -10,6 +10,7 @@ library("ggridges")       # joy plots
 library("patchwork")      # merging plots
 library("naniar")         # analyzing missingness
 library('tidytext')       # text mining
+library('viridis')        # color pallette
 
 wave_dfs <- readRDS(file = here("_data", "_participant_scores", "wave_2", "wave_2_dfs.RDS"))
 wave_df <- wave_dfs[[1]]
@@ -63,18 +64,83 @@ ggsave(here("images", "participant_confidence_subjectivity.png"))
 rm(p1, p2)
 ```
 
+```{r}
+df <- wave_df %>% select(item_ID, participant_ID, all_of(values)) %>% 
+  pivot_longer(cols = all_of(values), names_to = "value", values_to = "rating")
+
+df$isna <- is.na(df$rating)
+df$rating <- addNA(df$rating)
+```
 
 
 ```{r}
-df %>%
-  ggplot(aes(x=response, y=question, fill = question, alpha = .7)) +
-    geom_density_ridges() +
-    theme_minimal() +
-    scale_x_continuous(breaks = seq(1, 7, 1)) +
-    scale_fill_viridis_d(option = "magma") +
-    scale_y_discrete(labels = function(x) str_wrap(x, width = 35)) +
-    ylab("") + xlab("Response") +
-    theme(legend.position="none", axis.text.y = element_text(size = 12))
+colors <- viridis(10, option = "magma")
 
-ggsave(here("images", "participant_survey.png"))
+plot <-  df %>%
+    ggplot(aes(x=rating, fill = isna)) +
+    geom_histogram(stat="count", bins = 9) +
+    scale_fill_manual(values = c(colors[4], colors [9])) +
+    theme_minimal() +
+    theme(legend.position="none")
+
+plot_grid(plot + facet_wrap(~value, nrow = 2), plot, ncol = 1)
+
+ggsave(here("images", "wave_participant_rating_distribution.png"))
 ```
+
+```{r}
+# read in LLM data
+path <- here("_data", "_intermediary_data", "wave_2")
+llm_df <- readRDS(here(path, "llm_wave_df.RDS"))
+rm(path)
+
+# format into list of dfs
+llm_df <- llm_df %>% 
+  pivot_longer(cols = all_of(contains("run")), names_to = "run", values_to = "score") %>%
+  pivot_wider(names_from = "value", values_from = "score") %>%
+  mutate(item_ID = item_ID %>% as.character() %>% str_pad(., 4, pad = "0", side = "left"))
+
+# split into a list with one df per text type (lyrics / speeches)
+llm_dfs <- split(llm_df, f = llm_df$text)
+
+# split again with one df per model
+llm_dfs <- lapply(llm_dfs, function(df){split(df, f = df$model)})
+
+rm(llm_df)
+```
+
+```{r}
+plots <- imap(llm_dfs[['lyrics']], function(df, name){
+
+  df <- df %>% pivot_longer(cols = all_of(values), names_to = "value", values_to = "rating")
+
+  df$isna <- is.na(df$rating)
+  df$rating <- addNA(df$rating)
+    
+  # Histogram by value (faceted)
+  p_facet <- df %>%
+    ggplot(aes(x = rating, fill = isna)) +
+    geom_histogram(stat = "count", bins = 11) +
+    scale_fill_manual(values = colors[4]) +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    facet_wrap(~value, nrow = 2) +
+    labs(title = paste(name, "by value"))
+  
+  # Combined histogram
+  p_total <- df %>%
+    ggplot(aes(x = rating, fill = isna)) +
+    geom_histogram(stat = "count", bins = 11) +
+    scale_fill_manual(values = colors[4]) +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    labs(title = paste(name, "(Total)"))
+
+plot_grid(p_facet, p_total, ncol = 1)
+})
+
+ggsave(plot = plots[[1]], filename = here("images", "wave_gemma_rating_distribution.png"))
+ggsave(plot = plots[[2]], filename = here("images", "wave_phi_rating_distribution.png"))
+ggsave(plot = plots[[3]], filename = here("images", "wave_qwen_rating_distribution.png"))
+```
+

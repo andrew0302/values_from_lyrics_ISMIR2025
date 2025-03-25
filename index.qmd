@@ -13,9 +13,26 @@ We asked participants in our pilot study (n=100) about their lyric preferences, 
 In our main annotation data collection wave, we asked participants how confident they were in their ratings for each song, and how subjective they thought the task was overall. Although participants generally indicate high confidence in each of their ratings, they also indicate that they see this overall as a subjective task. 
 
 
-
-
 ![](images/participant_confidence_subjectivity.png){fig-align="center"}
+
+Participants often rate values as missing, which makes sense given that lyrics are short snippets, and gaining a complete perspective of the values of the "Speaker" is unlikely. 
+
+![](images/wave_participant_rating_distribution.png){fig-align="center"}
+LLMs show a rather different distribution, with no NA values:
+
+::: {.panel-tabset}
+
+#gemma
+![](images/wave_gemma_rating_distribution.png){fig-align="center"}
+#phi
+
+![](images/wave_phi_rating_distribution.png){fig-align="center"}
+
+#qwen
+
+![](images/wave_qwen_rating_distribution.png){fig-align="center"}
+
+:::
 
 
 Means from participant ratings in our main wave of annotation data collection generally conformed to expectations in terms of patterns in the MDS plot. As explained in the paper, the test is to see whether values appear next to appropriate neighboring values. In nearly all cases, ours do. 
