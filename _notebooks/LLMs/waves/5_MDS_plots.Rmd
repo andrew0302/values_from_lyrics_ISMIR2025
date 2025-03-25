@@ -26,7 +26,7 @@ theme_set(theme_minimal())
 ```
 
 ```{r}
-# read in data
+# read in participant data
 files <- list.files(here("_data", "_participant_scores", "wave_2"))
 wave_2_dfs <- lapply(files, function(file){
   readRDS(here("_data", "_participant_scores", "wave_2", file))
@@ -35,11 +35,7 @@ wave_2_dfs <- lapply(files, function(file){
 names(wave_2_dfs) <- lapply(files, str_replace, pattern = ".RDS", replacement = "")
 
 rm(files)
-```
 
-
-
-```{r}
 mean_dfs <- lapply(wave_2_dfs, function(df_list){
   lapply(df_list, function(df){
     df %>% 
@@ -52,8 +48,41 @@ mean_dfs <- lapply(wave_2_dfs, function(df_list){
       pivot_wider(values_from = rating, names_from = value)
   })
 })
+
+rm(wave_2_dfs)
 ```
 
+```{r}
+# read in LLM data
+path <- here("_data", "_intermediary_data", "wave_2")
+llm_df <- readRDS(here(path, "llm_wave_df.RDS"))
+rm(path)
+
+# format into list of dfs
+llm_df <- llm_df %>% 
+  pivot_longer(cols = all_of(contains("run")), names_to = "run", values_to = "score") %>%
+  pivot_wider(names_from = "value", values_from = "score") %>%
+  mutate(item_ID = item_ID %>% as.character() %>% str_pad(., 4, pad = "0", side = "left"))
+
+# split into a list with one df per text type (lyrics / speeches)
+llm_dfs <- split(llm_df, f = llm_df$text)
+
+# split again with one df per model
+llm_dfs <- lapply(llm_dfs, function(df){split(df, f = df$model)})
+
+rm(llm_df)
+
+# compute means per item
+llm_mean_dfs <- lapply(llm_dfs, function(df_list){
+  lapply(df_list, function(df){
+    df %>% group_by(item_ID) %>%
+      # compute mean for all columns
+      dplyr::summarise(across(-c(model, text, run), mean, na.rm=T))
+  }) 
+})
+
+rm(llm_dfs)
+```
 
 ```{r}
 # correlation matrix from Schwartz, 2001, Table 2 (upper triangle):
@@ -122,9 +151,30 @@ mds_plot <- function(correlation_matrix, title) {
 
 ```{r}
 plot_grid(
-  og_correlation_matrix %>% mds_plot(., "Schwartz, 2001"), 
-  mean_dfs[[2]][[1]] %>% select(all_of(values)) %>% cor(use = "complete.obs") %>% mds_plot(., "Lyrics")
+  og_correlation_matrix %>% mds_plot(., "Schwartz, 2001") +
+    scale_x_continuous(name="", limits=c(-1, 1)) + 
+    scale_y_continuous(name="", limits=c(-.85, .85)), 
+  mean_dfs[[2]][[1]] %>% select(all_of(values)) %>% 
+    cor(use = "complete.obs") %>% mds_plot(., "Our participants")  +
+    scale_x_continuous(name="", limits=c(-1, 1)) + 
+    scale_y_continuous(name="", limits=c(-.85, .85))
 )
 
-ggsave(here("images", "participant_MDS_plot.png"))
+ggsave(here("images", "wave_participant_MDS_plot.png"), height=3.5,width=7)
 ```
+
+```{r}
+imap(llm_mean_dfs[["lyrics"]], function(df, name){
+  
+  plot_grid(og_correlation_matrix %>% mds_plot(., "Schwartz, 2001") +
+      scale_x_continuous(name="", limits=c(-1, 1)) + 
+      scale_y_continuous(name="", limits=c(-.85, .85)), 
+    df %>% select(all_of(values)) %>% cor(use = "complete.obs") %>% mds_plot(., name) +
+      scale_x_continuous(name="", limits=c(-1, 1)) + 
+      scale_y_continuous(name="", limits=c(-.85, .85))
+    )
+  
+  ggsave(here("images", paste0("wave_", name, "_MDS_plot.png")), height=3.5,width=7)
+})
+```
+
